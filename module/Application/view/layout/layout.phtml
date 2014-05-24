@@ -1,0 +1,36 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <?php echo $this->headTitle("Bukariniov's test task for Veeam")
+        /*->setSeparator(' - ')
+        ->setAutoEscape(false)*/
+    ?>
+
+    <?php echo $this->headMeta()
+        ->appendName('viewport', 'width=device-width, initial-scale=1.0')
+        ->appendHttpEquiv('X-UA-Compatible', 'IE=edge')
+    ?>
+
+    <?php echo $this->headLink()
+        ->appendStylesheet('//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css')
+        ->appendStylesheet('//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap-theme.min.css')
+        //->prependStylesheet($this->basePath() . '/css/style.css')
+    ?>
+    <?php echo $this->headScript()
+        ->appendFile('//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')
+        ->appendFile('//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js')
+    ?>
+</head>
+<body>
+    <div class="container">
+        <div class="page-header">
+            <h1><?php echo $this->translate("Bukariniov's test task for Veeam") ?></h1>
+        </div>
+
+        <?php echo $this->content; ?>
+    </div>
+    <?php /*echo $this->inlineScript()*/ ?>
+</body>
+</html>
