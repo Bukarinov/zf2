@@ -36,6 +36,14 @@ return array(
 
                 return $form;
             },
+            'VacancyService' => function(ServiceManager $serviceManager) {
+                $service = new Service\Vacancy();
+                /* @var DocumentManager $documentManager */
+                $documentManager = $serviceManager->get('doctrine.documentmanager.odm_default');
+                $service->setObjectManager($documentManager);
+
+                return $service;
+            },
         ),
     ),
     'view_manager' => array(
