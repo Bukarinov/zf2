@@ -3,7 +3,7 @@
 namespace Application\Test\Controller;
 
 use Zend\Http\Response;
-use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase;
+use Zend\Test\PHPUnit\Controller\AbstractHttpControllerTestCase;
 
 use Doctrine\ODM\MongoDB\DocumentManager;
 
@@ -11,7 +11,7 @@ use Application\Test\Bootstrap;
 use Application\Model\Vacancy;
 use Application\Model\Department;
 
-class IndexControllerTest extends AbstractControllerTestCase
+class IndexControllerTest extends AbstractHttpControllerTestCase
 {
     /**
      *
@@ -55,32 +55,32 @@ class IndexControllerTest extends AbstractControllerTestCase
 
         $vacancy1 = $this->createVacancy(array(
             'title' => array(
-                'ru' => 'Вакансия 1',
-                'en' => 'Vacancy 1',
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en',
             ),
             'description' => array(
-                'ru' => 'Вакансия 1',
-                'en' => 'Vacancy 1'
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en'
             ),
             'department' => $department1,
         ));
         $vacancy2 = $this->createVacancy(array(
             'title' => array(
-                'en' => 'Vacancy 2',
+                'en' => 'Vacancy 2, en',
             ),
             'description' => array(
-                'en' => 'Vacancy 2'
+                'en' => 'Vacancy 2 description, en'
             ),
             'department' => $department1,
         ));
         $vacancy3 = $this->createVacancy(array(
             'title' => array(
-                'ru' => 'Вакансия 3',
-                'en' => 'Vacancy 3',
+                'ru' => 'Vacancy 3, ru',
+                'en' => 'Vacancy 3, en',
             ),
             'description' => array(
-                'ru' => 'Вакансия 3',
-                'en' => 'Vacancy 3'
+                'ru' => 'Vacancy 3 description, ru',
+                'en' => 'Vacancy 3 description, en'
             ),
             'department' => $department2,
         ));
@@ -94,12 +94,12 @@ class IndexControllerTest extends AbstractControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertContains($vacancy1->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy1->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy2->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy2->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy3->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy3->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitleByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy3->getTitleByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy3->getDescriptionByLanguage('en'));
     }
 
     /**
@@ -116,32 +116,32 @@ class IndexControllerTest extends AbstractControllerTestCase
 
         $vacancy1 = $this->createVacancy(array(
             'title' => array(
-                'ru' => 'Вакансия 1',
-                'en' => 'Vacancy 1',
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en',
             ),
             'description' => array(
-                'ru' => 'Вакансия 1',
-                'en' => 'Vacancy 1'
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en'
             ),
             'department' => $department1,
         ));
         $vacancy2 = $this->createVacancy(array(
             'title' => array(
-                'en' => 'Vacancy 2',
+                'en' => 'Vacancy 2, en',
             ),
             'description' => array(
-                'en' => 'Vacancy 2'
+                'en' => 'Vacancy 2 description, en'
             ),
             'department' => $department1,
         ));
         $vacancy3 = $this->createVacancy(array(
             'title' => array(
-                'ru' => 'Вакансия 3',
-                'en' => 'Vacancy 3',
+                'ru' => 'Vacancy 3, ru',
+                'en' => 'Vacancy 3 description, en',
             ),
             'description' => array(
-                'ru' => 'Вакансия 3',
-                'en' => 'Vacancy 3'
+                'ru' => 'Vacancy 3, ru',
+                'en' => 'Vacancy 3 description, en'
             ),
             'department' => $department2,
         ));
@@ -157,12 +157,12 @@ class IndexControllerTest extends AbstractControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertContains($vacancy1->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy1->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy2->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy2->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertNotContains($vacancy3->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertNotContains($vacancy3->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitleByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescriptionByLanguage('en'));
+        $this->assertNotQueryContentContains('.vacancies dl dt', $vacancy3->getTitleByLanguage('en'));
+        $this->assertNotQueryContentContains('.vacancies dl dd', $vacancy3->getDescriptionByLanguage('en'));
     }
 
     /**
@@ -179,32 +179,32 @@ class IndexControllerTest extends AbstractControllerTestCase
 
         $vacancy1 = $this->createVacancy(array(
             'title' => array(
-                'ru' => 'Вакансия 1',
-                'en' => 'Vacancy 1',
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en',
             ),
             'description' => array(
-                'ru' => 'Вакансия 1',
-                'en' => 'Vacancy 1'
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en'
             ),
             'department' => $department1,
         ));
         $vacancy2 = $this->createVacancy(array(
             'title' => array(
-                'en' => 'Vacancy 2',
+                'en' => 'Vacancy 2, en',
             ),
             'description' => array(
-                'en' => 'Vacancy 2'
+                'en' => 'Vacancy 2 description, en'
             ),
             'department' => $department1,
         ));
         $vacancy3 = $this->createVacancy(array(
             'title' => array(
-                'ru' => 'Вакансия 3',
-                'en' => 'Vacancy 3',
+                'ru' => 'Vacancy 3, ru',
+                'en' => 'Vacancy 3 description, en',
             ),
             'description' => array(
-                'ru' => 'Вакансия 3',
-                'en' => 'Vacancy 3'
+                'ru' => 'Vacancy 3, ru',
+                'en' => 'Vacancy 3 description, en'
             ),
             'department' => $department2,
         ));
@@ -221,12 +221,14 @@ class IndexControllerTest extends AbstractControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertContains($vacancy1->getTitleByLanguage('ru'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy1->getDescriptionByLanguage('ru'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy2->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertContains($vacancy2->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertNotContains($vacancy3->getTitleByLanguage('en'), $this->getResponse()->getContent());
-        $this->assertNotContains($vacancy3->getDescriptionByLanguage('en'), $this->getResponse()->getContent());
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('ru'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('ru'));
+        $this->assertNotContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('en'));
+        $this->assertNotContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitleByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescriptionByLanguage('en'));
+        $this->assertNotContains('.vacancies dl dt', $vacancy3->getTitleByLanguage('en'));
+        $this->assertNotContains('.vacancies dl dd', $vacancy3->getDescriptionByLanguage('en'));
     }
 
     /**
