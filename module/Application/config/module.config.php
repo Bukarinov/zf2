@@ -1,4 +1,7 @@
 <?php
+
+namespace Application;
+
 return array(
     'router' => array(
         'routes' => array(
@@ -33,6 +36,20 @@ return array(
         ),
         'template_path_stack' => array(
             __DIR__ . '/../view',
+        ),
+    ),
+    'doctrine' => array(
+        'driver' => array(
+            __NAMESPACE__ . '_models' => array(
+                'class' => 'Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver',
+                'cache' => 'array',
+                'paths' => array(__DIR__ . '/../src/' . __NAMESPACE__ . '/Model'),
+            ),
+            'odm_default' => array(
+                'drivers' => array(
+                    __NAMESPACE__ . '\Model' => __NAMESPACE__ . '_models',
+                ),
+            ),
         ),
     ),
 );
