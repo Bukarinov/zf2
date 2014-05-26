@@ -23,7 +23,7 @@ class IndexController extends AbstractActionController
         $form = $this->getServiceLocator()->get('VacanciesFilter');
         $form->setData($this->getRequest()->getQuery());
 
-        /* @var VacancyService $departmentService */
+        /* @var VacancyService $vacancyService */
         $vacancyService = $this->getServiceLocator()->get('VacancyService');
         $department = $this->getRequest()->getQuery('department', null);
         $vacancies = $vacancyService->findVacancies($department);

@@ -49,14 +49,14 @@ class Vacancy implements ObjectManagerAwareInterface
     }
 
     /**
-     * @param string $department
+     * @param string $departmentId
      * @return VacancyModel[]
      */
-    public function findVacancies($department = null)
+    public function findVacancies($departmentId = null)
     {
-        if (!empty($department)) {
+        if (!empty($departmentId)) {
             return $this->getRepository()->findBy(array(
-                'department' => $department
+                'department' => $departmentId
             ));
         }
 

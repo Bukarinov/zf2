@@ -1,0 +1,17 @@
+<?php
+return array(
+    'modules' => array(
+        'Application',
+        'DoctrineModule',
+        'DoctrineMongoODMModule',
+    ),
+    'module_listener_options' => array(
+        'config_glob_paths'    => array(
+            sprintf('../../../config/autoload/{,*.}{global,%s,local}.php', APPLICATION_ENV),
+        ),
+        'module_paths' => array(
+            'module',
+            'vendor',
+        ),
+    ),
+);

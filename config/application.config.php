@@ -12,7 +12,7 @@ return array(
             './vendor',
         ),
         'config_glob_paths' => array(
-            'config/autoload/{,*.}{global,local}.php',
+            sprintf('config/autoload/{,*.}{global,%s,local}.php', APPLICATION_ENV),
         ),
 
         // Whether or not to enable a configuration cache.
