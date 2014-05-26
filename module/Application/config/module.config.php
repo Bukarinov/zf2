@@ -2,6 +2,9 @@
 
 namespace Application;
 
+use Zend\ServiceManager\ServiceManager;
+use Doctrine\ODM\MongoDB\DocumentManager;
+
 return array(
     'router' => array(
         'routes' => array(
@@ -20,6 +23,19 @@ return array(
     'controllers' => array(
         'invokables' => array(
             'Application\Controller\Index' => 'Application\Controller\IndexController'
+        ),
+    ),
+    'service_manager' => array(
+        'factories' => array(
+            'VacanciesFilter' => function(ServiceManager $serviceManager) {
+                $form = new Form\VacanciesFilter();
+                /* @var DocumentManager $documentManager */
+                $documentManager = $serviceManager->get('doctrine.documentmanager.odm_default');
+                $form->setObjectManager($documentManager);
+                $form->init();
+
+                return $form;
+            },
         ),
     ),
     'view_manager' => array(
