@@ -19,8 +19,8 @@
         <?php foreach ($this->vacancies as $vacancy) { ?>
             <?php /* @var \Application\Model\Vacancy $vacancy */ ?>
             <dl>
-                <dt><?php echo $vacancy->getTitleByLanguage($this->language) ?></dt>
-                <dd><?php echo $vacancy->getDescriptionByLanguage($this->language) ?></dd>
+                <dt><?php echo $vacancy->getTitle($this->language) ?></dt>
+                <dd><?php echo $vacancy->getDescription($this->language) ?></dd>
             </dl>
         <?php } ?>
     </div>

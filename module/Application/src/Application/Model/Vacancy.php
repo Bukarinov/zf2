@@ -13,6 +13,11 @@ use Doctrine\ODM\MongoDB\Mapping\Annotations as ODM;
 class Vacancy extends AbstractModel
 {
     /**
+     *
+     */
+    const DEFAULT_LANGUAGE = 'en';
+
+    /**
      * @ODM\Hash
      * @var array
      */
@@ -32,35 +37,59 @@ class Vacancy extends AbstractModel
     protected $department;
 
     /**
-     * @param array $description
+     * @param string $description
+     * @param string $language
      */
-    public function setDescription($description)
+    public function setDescription($description, $language = self::DEFAULT_LANGUAGE)
     {
-        $this->description = $description;
+        $this->description[$language] = $description;
     }
 
     /**
-     * @return array
+     * @param string $language
+     * @return string
+     * @throws \InvalidArgumentException
      */
-    public function getDescription()
+    public function getDescription($language = self::DEFAULT_LANGUAGE)
     {
-        return $this->description;
+        if (isset($this->description[$language])) {
+            return $this->description[$language];
+        }
+
+        if (isset($this->description[self::DEFAULT_LANGUAGE])) {
+            return $this->description[self::DEFAULT_LANGUAGE];
+        }
+
+        // @TODO Custom exception for models
+        throw new \InvalidArgumentException();
     }
 
     /**
-     * @param array $title
+     * @param string $title
+     * @param string $language
      */
-    public function setTitle($title)
+    public function setTitle($title, $language = self::DEFAULT_LANGUAGE)
     {
-        $this->title = $title;
+        $this->title[$language] = $title;
     }
 
     /**
-     * @return array
+     * @param string $language
+     * @return string
+     * @throws \InvalidArgumentException
      */
-    public function getTitle()
+    public function getTitle($language = self::DEFAULT_LANGUAGE)
     {
-        return $this->title;
+        if (isset($this->title[$language])) {
+            return $this->title[$language];
+        }
+
+        if (isset($this->title[self::DEFAULT_LANGUAGE])) {
+            return $this->title[self::DEFAULT_LANGUAGE];
+        }
+
+        // @TODO Custom exception for models
+        throw new \InvalidArgumentException();
     }
 
     /**
@@ -77,31 +106,5 @@ class Vacancy extends AbstractModel
     public function getDepartment()
     {
         return $this->department;
-    }
-
-    /**
-     * @param string $language
-     * @return string
-     */
-    public function getTitleByLanguage($language = 'en')
-    {
-        if (isset($this->title[$language])) {
-            return $this->title[$language];
-        }
-
-        return $this->title['en'];
-    }
-
-    /**
-     * @param string $language
-     * @return string
-     */
-    public function getDescriptionByLanguage($language = 'en')
-    {
-        if (isset($this->description[$language])) {
-            return $this->description[$language];
-        }
-
-        return $this->description['en'];
     }
 }

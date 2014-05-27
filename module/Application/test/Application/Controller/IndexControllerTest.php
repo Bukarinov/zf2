@@ -94,12 +94,12 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitleByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescriptionByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy3->getTitleByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy3->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy3->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy3->getDescription('en'));
     }
 
     /**
@@ -157,12 +157,12 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitleByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescriptionByLanguage('en'));
-        $this->assertNotQueryContentContains('.vacancies dl dt', $vacancy3->getTitleByLanguage('en'));
-        $this->assertNotQueryContentContains('.vacancies dl dd', $vacancy3->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
+        $this->assertNotQueryContentContains('.vacancies dl dt', $vacancy3->getTitle('en'));
+        $this->assertNotQueryContentContains('.vacancies dl dd', $vacancy3->getDescription('en'));
     }
 
     /**
@@ -221,14 +221,14 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('ru'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('ru'));
-        $this->assertNotContains('.vacancies dl dt', $vacancy1->getTitleByLanguage('en'));
-        $this->assertNotContains('.vacancies dl dd', $vacancy1->getDescriptionByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitleByLanguage('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescriptionByLanguage('en'));
-        $this->assertNotContains('.vacancies dl dt', $vacancy3->getTitleByLanguage('en'));
-        $this->assertNotContains('.vacancies dl dd', $vacancy3->getDescriptionByLanguage('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitle('ru'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescription('ru'));
+        $this->assertNotContains('.vacancies dl dt', $vacancy1->getTitle('en'));
+        $this->assertNotContains('.vacancies dl dd', $vacancy1->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
+        $this->assertNotContains('.vacancies dl dt', $vacancy3->getTitle('en'));
+        $this->assertNotContains('.vacancies dl dd', $vacancy3->getDescription('en'));
     }
 
     /**
