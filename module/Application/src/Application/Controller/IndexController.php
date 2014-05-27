@@ -7,6 +7,7 @@ use Zend\View\Model\ViewModel;
 
 use Application\Form\VacanciesFilter;
 use Application\Service\Vacancy as VacancyService;
+use Application\Model\Vacancy;
 
 /**
  * Class IndexController
@@ -19,19 +20,31 @@ class IndexController extends AbstractActionController
      */
     public function indexAction()
     {
+        $department = null;
+        $language = Vacancy::DEFAULT_LANGUAGE;
+        $vacancies = array();
+
         /* @var VacanciesFilter $form */
         $form = $this->getServiceLocator()->get('VacanciesFilter');
-        $form->setData($this->getRequest()->getQuery());
+        $form->setData(array_merge(
+            array('language' => $language),
+            $this->getRequest()->getQuery()->toArray()
+        ));
 
-        /* @var VacancyService $vacancyService */
-        $vacancyService = $this->getServiceLocator()->get('VacancyService');
-        $department = $this->getRequest()->getQuery('department', null);
-        $vacancies = $vacancyService->findVacancies($department);
+        if ($form->isValid()) {
+            $formData = $form->getData();
+            $department = $formData['department'];
+            $language = $formData['language'];
+
+            /* @var VacancyService $vacancyService */
+            $vacancyService = $this->getServiceLocator()->get('VacancyService');
+            $vacancies = $vacancyService->findVacancies($department);
+        }
 
         return new ViewModel(array(
             'form'        => $form,
             'vacancies'   => $vacancies,
-            'language'    => $this->getRequest()->getQuery('language', 'en'),
+            'language'    => $language,
         ));
     }
 }

@@ -10,6 +10,7 @@ use Doctrine\ODM\MongoDB\DocumentManager;
 use Application\Test\Bootstrap;
 use Application\Model\Vacancy;
 use Application\Model\Department;
+use Application\Model\Language;
 
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
@@ -46,6 +47,15 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
      */
     public function testIndexAction()
     {
+        $this->createLanguage(array(
+            'id'    => 'en',
+            'title' => 'En',
+        ));
+        $this->createLanguage(array(
+            'id'    => 'ru',
+            'title' => 'Ru',
+        ));
+
         $department1 = $this->createDepartment(array(
             'title' => 'Department 1',
         ));
@@ -107,6 +117,15 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
      */
     public function testIndexActionFilteredByDepartment()
     {
+        $this->createLanguage(array(
+            'id'    => 'en',
+            'title' => 'En',
+        ));
+        $this->createLanguage(array(
+            'id'    => 'ru',
+            'title' => 'Ru',
+        ));
+
         $department1 = $this->createDepartment(array(
             'title' => 'Department 1',
         ));
@@ -170,6 +189,15 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
      */
     public function testIndexActionFilteredByDepartmentAndLanguage()
     {
+        $this->createLanguage(array(
+            'id'    => 'en',
+            'title' => 'En',
+        ));
+        $this->createLanguage(array(
+            'id'    => 'ru',
+            'title' => 'Ru',
+        ));
+
         $department1 = $this->createDepartment(array(
             'title' => 'Department 1',
         ));
@@ -229,6 +257,23 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
         $this->assertNotContains('.vacancies dl dt', $vacancy3->getTitle('en'));
         $this->assertNotContains('.vacancies dl dd', $vacancy3->getDescription('en'));
+    }
+
+    /**
+     * @TODO Move it to some plugin or service
+     *
+     * @param array $data
+     * @return Language
+     */
+    protected function createLanguage(array $data = array())
+    {
+        $language = new Language($data);
+        /* @var DocumentManager $documentManager */
+        $documentManager = $this->getApplicationServiceLocator()->get('doctrine.documentmanager.odm_default');
+        $documentManager->persist($language);
+        $documentManager->flush();
+
+        return $language;
     }
 
     /**
