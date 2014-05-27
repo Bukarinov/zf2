@@ -15,22 +15,127 @@ use Application\Model\Language;
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
     /**
+     * @var Department[]
+     */
+    protected static $departments = array();
+
+    /**
+     * @var Vacancy[]
+     */
+    protected static $vacancies = array();
+
+    /**
+     * @TODO Move it to some plugin or service
+     *
+     * @param array $data
+     * @return Language
+     */
+    protected static function createLanguage(array $data = array())
+    {
+        $language = new Language($data);
+        /* @var DocumentManager $documentManager */
+        $documentManager = Bootstrap::getServiceManager()->get('doctrine.documentmanager.odm_default');
+        $documentManager->persist($language);
+        $documentManager->flush();
+
+        return $language;
+    }
+
+    /**
+     * @TODO Move it to some plugin or service
+     *
+     * @param array $data
+     * @return Department
+     */
+    protected static function createDepartment(array $data = array())
+    {
+        $department = new Department($data);
+        /* @var DocumentManager $documentManager */
+        $documentManager = Bootstrap::getServiceManager()->get('doctrine.documentmanager.odm_default');
+        $documentManager->persist($department);
+        $documentManager->flush();
+
+        return $department;
+    }
+
+    /**
+     * @TODO Move it to some plugin or service
+     *
+     * @param array $data
+     * @return Vacancy
+     */
+    protected static function createVacancy(array $data = array())
+    {
+        $vacancy = new Vacancy($data);
+        /* @var DocumentManager $documentManager */
+        $documentManager = Bootstrap::getServiceManager()->get('doctrine.documentmanager.odm_default');
+        $documentManager->persist($vacancy);
+        $documentManager->flush();
+
+        return $vacancy;
+    }
+
+    /**
      *
      */
-    protected function setUp()
+    public static function setUpBeforeClass()
     {
-        $this->setApplicationConfig(Bootstrap::getConfig());
+        self::createLanguage(array(
+            'id'    => 'en',
+            'title' => 'En',
+        ));
+        self::createLanguage(array(
+            'id'    => 'ru',
+            'title' => 'Ru',
+        ));
 
-        parent::setUp();
+        self::$departments[] = self::createDepartment(array(
+            'title' => 'Department 1',
+        ));
+        self::$departments[] = self::createDepartment(array(
+            'title' => 'Department 2',
+        ));
+
+        self::$vacancies[] = self::createVacancy(array(
+            'title' => array(
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en',
+            ),
+            'description' => array(
+                'ru' => 'Vacancy 1, ru',
+                'en' => 'Vacancy 1 description, en'
+            ),
+            'department' => self::$departments[0],
+        ));
+        self::$vacancies[] = self::createVacancy(array(
+            'title' => array(
+                'en' => 'Vacancy 2, en',
+            ),
+            'description' => array(
+                'en' => 'Vacancy 2 description, en'
+            ),
+            'department' => self::$departments[0],
+        ));
+        self::$vacancies[] = self::createVacancy(array(
+            'title' => array(
+                'ru' => 'Vacancy 3, ru',
+                'en' => 'Vacancy 3, en',
+            ),
+            'description' => array(
+                'ru' => 'Vacancy 3 description, ru',
+                'en' => 'Vacancy 3 description, en'
+            ),
+            'department' => self::$departments[1],
+        ));
     }
 
     /**
      * @TODO Move it to some plugin or service
      */
-    protected function tearDown()
+    public static function tearDownAfterClass()
     {
         /* @var DocumentManager $documentManager */
-        $documentManager = $this->getApplicationServiceLocator()->get('doctrine.documentmanager.odm_default');
+        $documentManager = Bootstrap::getServiceManager()->get('doctrine.documentmanager.odm_default');
         $databases = $documentManager->getDocumentDatabases();
         foreach ($databases as $database) {
             /* @var $database \Doctrine\MongoDB\Database */
@@ -45,57 +150,19 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
     /**
      *
      */
+    protected function setUp()
+    {
+        $this->setApplicationConfig(Bootstrap::getConfig());
+
+        parent::setUp();
+    }
+
+    /**
+     * Should find all vacancies of all departments
+     * Description and title of all vacancies should be on english
+     */
     public function testIndexAction()
     {
-        $this->createLanguage(array(
-            'id'    => 'en',
-            'title' => 'En',
-        ));
-        $this->createLanguage(array(
-            'id'    => 'ru',
-            'title' => 'Ru',
-        ));
-
-        $department1 = $this->createDepartment(array(
-            'title' => 'Department 1',
-        ));
-        $department2 = $this->createDepartment(array(
-            'title' => 'Department 2',
-        ));
-
-        $vacancy1 = $this->createVacancy(array(
-            'title' => array(
-                'ru' => 'Vacancy 1, ru',
-                'en' => 'Vacancy 1 description, en',
-            ),
-            'description' => array(
-                'ru' => 'Vacancy 1, ru',
-                'en' => 'Vacancy 1 description, en'
-            ),
-            'department' => $department1,
-        ));
-        $vacancy2 = $this->createVacancy(array(
-            'title' => array(
-                'en' => 'Vacancy 2, en',
-            ),
-            'description' => array(
-                'en' => 'Vacancy 2 description, en'
-            ),
-            'department' => $department1,
-        ));
-        $vacancy3 = $this->createVacancy(array(
-            'title' => array(
-                'ru' => 'Vacancy 3, ru',
-                'en' => 'Vacancy 3, en',
-            ),
-            'description' => array(
-                'ru' => 'Vacancy 3 description, ru',
-                'en' => 'Vacancy 3 description, en'
-            ),
-            'department' => $department2,
-        ));
-
-
         $this->dispatch('/');
 
         $this->assertResponseStatusCode(200);
@@ -104,70 +171,22 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitle('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescription('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitle('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy3->getTitle('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy3->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[0]->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[0]->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[1]->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[1]->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[2]->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[2]->getDescription('en'));
     }
 
     /**
-     *
+     * Should find all vacancies of one department
+     * Description and title of all vacancies should be on english
      */
     public function testIndexActionFilteredByDepartment()
     {
-        $this->createLanguage(array(
-            'id'    => 'en',
-            'title' => 'En',
-        ));
-        $this->createLanguage(array(
-            'id'    => 'ru',
-            'title' => 'Ru',
-        ));
-
-        $department1 = $this->createDepartment(array(
-            'title' => 'Department 1',
-        ));
-        $department2 = $this->createDepartment(array(
-            'title' => 'Department 2',
-        ));
-
-        $vacancy1 = $this->createVacancy(array(
-            'title' => array(
-                'ru' => 'Vacancy 1, ru',
-                'en' => 'Vacancy 1 description, en',
-            ),
-            'description' => array(
-                'ru' => 'Vacancy 1, ru',
-                'en' => 'Vacancy 1 description, en'
-            ),
-            'department' => $department1,
-        ));
-        $vacancy2 = $this->createVacancy(array(
-            'title' => array(
-                'en' => 'Vacancy 2, en',
-            ),
-            'description' => array(
-                'en' => 'Vacancy 2 description, en'
-            ),
-            'department' => $department1,
-        ));
-        $vacancy3 = $this->createVacancy(array(
-            'title' => array(
-                'ru' => 'Vacancy 3, ru',
-                'en' => 'Vacancy 3 description, en',
-            ),
-            'description' => array(
-                'ru' => 'Vacancy 3, ru',
-                'en' => 'Vacancy 3 description, en'
-            ),
-            'department' => $department2,
-        ));
-
-
         $this->dispatch('/', 'GET', array(
-            'department' => $department1->getId()
+            'department' => self::$departments[0]->getId()
         ));
 
         $this->assertResponseStatusCode(200);
@@ -176,70 +195,22 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitle('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescription('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitle('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
-        $this->assertNotQueryContentContains('.vacancies dl dt', $vacancy3->getTitle('en'));
-        $this->assertNotQueryContentContains('.vacancies dl dd', $vacancy3->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[0]->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[0]->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[1]->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[1]->getDescription('en'));
+        $this->assertNotQueryContentContains('.vacancies dl dt', self::$vacancies[2]->getTitle('en'));
+        $this->assertNotQueryContentContains('.vacancies dl dd', self::$vacancies[2]->getDescription('en'));
     }
 
     /**
-     *
+     * Should find all vacancies of one department
+     * Description and title of two vacancies should be on russian and one on english
      */
     public function testIndexActionFilteredByDepartmentAndLanguage()
     {
-        $this->createLanguage(array(
-            'id'    => 'en',
-            'title' => 'En',
-        ));
-        $this->createLanguage(array(
-            'id'    => 'ru',
-            'title' => 'Ru',
-        ));
-
-        $department1 = $this->createDepartment(array(
-            'title' => 'Department 1',
-        ));
-        $department2 = $this->createDepartment(array(
-            'title' => 'Department 2',
-        ));
-
-        $vacancy1 = $this->createVacancy(array(
-            'title' => array(
-                'ru' => 'Vacancy 1, ru',
-                'en' => 'Vacancy 1 description, en',
-            ),
-            'description' => array(
-                'ru' => 'Vacancy 1, ru',
-                'en' => 'Vacancy 1 description, en'
-            ),
-            'department' => $department1,
-        ));
-        $vacancy2 = $this->createVacancy(array(
-            'title' => array(
-                'en' => 'Vacancy 2, en',
-            ),
-            'description' => array(
-                'en' => 'Vacancy 2 description, en'
-            ),
-            'department' => $department1,
-        ));
-        $vacancy3 = $this->createVacancy(array(
-            'title' => array(
-                'ru' => 'Vacancy 3, ru',
-                'en' => 'Vacancy 3 description, en',
-            ),
-            'description' => array(
-                'ru' => 'Vacancy 3, ru',
-                'en' => 'Vacancy 3 description, en'
-            ),
-            'department' => $department2,
-        ));
-
-
         $this->dispatch('/', 'GET', array(
-            'department' => $department1->getId(),
+            'department' => self::$departments[0]->getId(),
             'language'   => 'ru',
         ));
 
@@ -249,64 +220,13 @@ class IndexControllerTest extends AbstractHttpControllerTestCase
         $this->assertControllerClass('IndexController');
         $this->assertMatchedRouteName('home');
 
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy1->getTitle('ru'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy1->getDescription('ru'));
-        $this->assertNotContains('.vacancies dl dt', $vacancy1->getTitle('en'));
-        $this->assertNotContains('.vacancies dl dd', $vacancy1->getDescription('en'));
-        $this->assertQueryContentContains('.vacancies dl dt', $vacancy2->getTitle('en'));
-        $this->assertQueryContentContains('.vacancies dl dd', $vacancy2->getDescription('en'));
-        $this->assertNotContains('.vacancies dl dt', $vacancy3->getTitle('en'));
-        $this->assertNotContains('.vacancies dl dd', $vacancy3->getDescription('en'));
-    }
-
-    /**
-     * @TODO Move it to some plugin or service
-     *
-     * @param array $data
-     * @return Language
-     */
-    protected function createLanguage(array $data = array())
-    {
-        $language = new Language($data);
-        /* @var DocumentManager $documentManager */
-        $documentManager = $this->getApplicationServiceLocator()->get('doctrine.documentmanager.odm_default');
-        $documentManager->persist($language);
-        $documentManager->flush();
-
-        return $language;
-    }
-
-    /**
-     * @TODO Move it to some plugin or service
-     *
-     * @param array $data
-     * @return Department
-     */
-    protected function createDepartment(array $data = array())
-    {
-        $department = new Department($data);
-        /* @var DocumentManager $documentManager */
-        $documentManager = $this->getApplicationServiceLocator()->get('doctrine.documentmanager.odm_default');
-        $documentManager->persist($department);
-        $documentManager->flush();
-
-        return $department;
-    }
-
-    /**
-     * @TODO Move it to some plugin or service
-     *
-     * @param array $data
-     * @return Vacancy
-     */
-    protected function createVacancy(array $data = array())
-    {
-        $vacancy = new Vacancy($data);
-        /* @var DocumentManager $documentManager */
-        $documentManager = $this->getApplicationServiceLocator()->get('doctrine.documentmanager.odm_default');
-        $documentManager->persist($vacancy);
-        $documentManager->flush();
-
-        return $vacancy;
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[0]->getTitle('ru'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[0]->getDescription('ru'));
+        $this->assertNotContains('.vacancies dl dt', self::$vacancies[0]->getTitle('en'));
+        $this->assertNotContains('.vacancies dl dd', self::$vacancies[0]->getDescription('en'));
+        $this->assertQueryContentContains('.vacancies dl dt', self::$vacancies[1]->getTitle('en'));
+        $this->assertQueryContentContains('.vacancies dl dd', self::$vacancies[1]->getDescription('en'));
+        $this->assertNotContains('.vacancies dl dt', self::$vacancies[2]->getTitle('en'));
+        $this->assertNotContains('.vacancies dl dd', self::$vacancies[2]->getDescription('en'));
     }
 }
