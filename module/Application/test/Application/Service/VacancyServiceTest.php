@@ -11,8 +11,11 @@ use Application\Model\Vacancy;
 use Application\Model\Department;
 use Application\Service\Vacancy as VacancyService;
 
-
-class VacancyTest extends \PHPUnit_Framework_TestCase
+/**
+ * Class VacancyServiceTest
+ * @package Application\Test\Controller
+ */
+class VacancyServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ServiceManager

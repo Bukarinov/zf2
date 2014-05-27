@@ -12,6 +12,10 @@ use Application\Model\Vacancy;
 use Application\Model\Department;
 use Application\Model\Language;
 
+/**
+ * Class IndexControllerTest
+ * @package Application\Test\Controller
+ */
 class IndexControllerTest extends AbstractHttpControllerTestCase
 {
     /**
